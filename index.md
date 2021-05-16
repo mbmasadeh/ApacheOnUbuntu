@@ -1,37 +1,131 @@
-## Welcome to GitHub Pages
+# In this project we will Create an Api Service and run it over Apache2 on Ubuntu 18
+## Prerequisites
+An Ubuntu 16/18/2.0 /machine
+Sudo user (Root user)
+Putty to make the life easy
 
-You can use the [editor on GitHub](https://github.com/mbmasadeh/ApacheOnUbuntu/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+## Install Apache2 server
+In your Ubuntu Machine
+Go root and install apache server
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+$ sudo su
+$ sudo apt-get install apache2 -y
+$ sudo apt-get install lamp-server^
+$ sudo systemctl enable apache2
 
-### Markdown
+Now server is ready, to test your work, open a web browser and paste your machine Ip address
+192.168.*.*
+<<<Its work>>>
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## Create a .Net Core project
+Now we will create a web api .net core application using visual studio 2017
+In your windows machine
+* Open your visual studio
+* Follow the wizard to create your web api service
 
-```markdown
-Syntax highlighted code block
+I'll assume that your project name is "ApiService"
+Now we will publish it, from the project navigation, right click on the root folder "ApiService" and click publish
 
-# Header 1
-## Header 2
-### Header 3
+We need to create a publish profile
+From the side bar, choose "IIS,FTP,etc" then click on Create Profile
+In the Connection change "Wep Deploy" to "File system" and choose your fav destination, in my case i choose "~/Desktop/Publish"
+In Settings do all the following:
+* Keep release as is
+* Target framework is the version of your net core "In my case it was 3 or 2.2"
+* Deployment Mode is Framework-Deployment
+* Target Runtime is Linux-x64
 
-- Bulleted
-- List
+Click "save" then publish, you will find the publish folder in the Desktop, keep it for now.
 
-1. Numbered
-2. List
+## .Net Configuration in Ubuntu machine
+We need to configure .Net core in the ubuntu server (Go root)
 
-**Bold** and _Italic_ and `Code` text
+In your Ubuntu machine
+Lets install .Net Core 2.2 (you can install any latest framework toy want)
+$ wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+$ sudo dpkg -i packages-microsoft-prod.deb
+$ sudo apt-get install apt-transport-https
+$ sudo apt-get update
+$ sudo apt-get install dotnet-sdk-2.2
 
-[Link](url) and ![Image](src)
-```
+Installation is done, to test your work, run this command in the same installation directory:
+$ dotnet --info
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+## Now lets install .Net core 3.0 Preview
+Go to this folder
+$ cd /usr/share/dotnet
+$ sudo wget https://download.visualstudio.microsoft.com/download/pr/498b8b41-7626-435e-bea8-878c39ccbbf3/c8df08e881d1bcf9a49a9ff5367090cc/dotnet-sdk-3.0.100-preview9-014004-linux-x64.tar.gz
+$ sudo tar -xvzf dotnet-sdk-3.0.100-preview9-014004-linux-x64.tar.gz
 
-### Jekyll Themes
+It’s done, to check your work, type:
+$ dotnet --info
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/mbmasadeh/ApacheOnUbuntu/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+## Apache2 server Configuration 
+In your ubuntu machine, lets do some configuration on apache2 server
+$ sudo a2enmod proxy proxy_http proxy_html proxy_wstunnel
+$ sudo a2enmod rewrite
 
-### Support or Contact
+## .Net Core project Configuration 
+Now we will do some configuration to host "ApiService"
+$ sudo nano /etc/apache2/conf-enabled/netcore.conf
+add these lines to the new file
+------------------------------------------------------
+<VirtualHost *:80>  
+   ServerName www.DOMAIN.COM  
+   ProxyPreserveHost On  
+   ProxyPass / http://127.0.0.1:5000/  
+   ProxyPassReverse / http://127.0.0.1:5000/  
+   RewriteEngine on  
+   RewriteCond %{HTTP:UPGRADE} ^WebSocket$ [NC]  
+   RewriteCond %{HTTP:CONNECTION} Upgrade$ [NC]  
+   RewriteRule /(.*) ws://127.0.0.1:5000/$1 [P]  
+   ErrorLog /var/log/apache2/netcore-error.log  
+   CustomLog /var/log/apache2/netcore-access.log common  
+</VirtualHost> 
+------------------------------------------------------
+Change the "ServerName" to your server name of just add the server IP address
+Save your work and exit the file
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+$ sudo service apache2 restart
+$ sudo apachectl configtest
+If your work is ok, you will get an OK Msg
+
+Let’s now enable .NET Core project in Apache
+First we need to move the published folder in windows machine "Publish folder" to the Ubuntu machine, you can use many tools, in my case i uploaded to my one drive and downloaded to my Ubuntu.
+The download folder will get "Publish.zip", unzip it to a pre created folder named "Publish" in the same directory
+$ cd Downloads
+$ mkdir Publish
+$ unzip Publish.zip -t Publish
+
+Enable .Net core application in Apache2 server
+$ sudo cp -a ~/Publish/ /var/netcore/
+Go back to the root folder
+$ cd ~
+$ sudo nano /etc/systemd/system/kestrel-netcore.service
+Paste these lines to the new opened file
+-----------------------------------------------------------------------
+[Unit]
+Description=ASP.NET Web Application
+[Service]
+WorkingDirectory=/var/netcore
+ExecStart=/usr/bin/dotnet /var/netcore/*.dll
+Restart=always
+RestartSec=10
+SyslogIdentifier=netcore-demo
+User=www-data
+Environment=ASPNETCORE_ENVIRONMENT=Production
+[Install]
+WantedBy=multi-user.target
+-----------------------------------------------------------------------
+Change this
+ExecStart=/usr/bin/dotnet /var/netcore/*.dll
+To be this
+ExecStart=/usr/bin/dotnet /var/netcore/ApiService.dll
+
+Save and exit 
+
+one last thing
+$ sudo systemctl enable kestrel-netcore.service
+$ sudo systemctl start kestrel-netcore.service
+
+Enjoy .....!
