@@ -99,7 +99,7 @@ add these lines to the new file
 </code></pre>
 
 Change the "ServerName" to your server name of just add the server IP address
-Save your work and exit the file
+<p>Save your work and exit the file</p>
 <pre><code>
 $ sudo service apache2 restart
 $ sudo apachectl configtest
@@ -107,9 +107,9 @@ $ sudo apachectl configtest
 If your work is ok, you will get an OK Msg
 
 ## Enable .Net core application in Apache2 server
-Let’s now enable .NET Core project in Apache
+<p>Let’s now enable .NET Core project in Apache</p>
 First we need to move the published folder in windows machine "Publish folder" to the Ubuntu machine, you can use many tools, in my case i uploaded to my one drive and downloaded to my Ubuntu.
-The download folder will get "Publish.zip", unzip it to a pre created folder named "Publish" in the same directory
+<p>The download folder will get "Publish.zip", unzip it to a pre created folder named "Publish" in the same directory</p>
 <pre><code>
 $ cd Downloads
 $ mkdir Publish
