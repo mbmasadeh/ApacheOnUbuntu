@@ -1,4 +1,4 @@
-# In this project we will Create an Api Service and run it over Apache2 on Ubuntu 18
+# In this project we will Create .NET Core Api Service and run it over Apache2 on Ubuntu 18
 ## Prerequisites
 An Ubuntu 16/18/2.0 /machine
 Sudo user (Root user)
