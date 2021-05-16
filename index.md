@@ -1,4 +1,4 @@
-# In this project we will Create .NET Core Api Service and run it over Apache2 on Ubuntu 18
+# In this project we will Create .NET Core Api Service and run it over Apache2 on Ubuntu 16/18/20
 ## Prerequisites
 An Ubuntu 16/18/2.0 /machine
 Sudo user (Root user)
@@ -14,9 +14,9 @@ $ sudo apt-get install lamp-server^
 $ sudo systemctl enable apache2
 </code></pre>
 
-Now server is ready, to test your work, open a web browser and paste your machine Ip address
-192.168.*.*
-<<<Its work>>>
+<p>Now server is ready, to test your work, open a web browser and paste your machine Ip address</p>
+192.168....
+<p>You will got this Msg (Its work)</p>
 
 ## Create a .Net Core project
 Now we will create a web api .net core application using visual studio 2017
@@ -24,25 +24,24 @@ In your windows machine
 * Open your visual studio
 * Follow the wizard to create your web api service
 
-I'll assume that your project name is "ApiService"
-Now we will publish it, from the project navigation, right click on the root folder "ApiService" and click publish
+<p>I'll assume that your project name is "ApiService".</p>
+<p>Now we will publish it, from the project navigation, right click on the root folder "ApiService" and click publish.</p>
 
-We need to create a publish profile
-From the side bar, choose "IIS,FTP,etc" then click on Create Profile
-In the Connection change "Wep Deploy" to "File system" and choose your fav destination, in my case i choose "~/Desktop/Publish"
-In Settings do all the following:
-* Keep release as is
-* Target framework is the version of your net core "In my case it was 3 or 2.2"
-* Deployment Mode is Framework-Deployment
-* Target Runtime is Linux-x64
+## We need to create a publish profile
+<p>From the side bar, choose "IIS,FTP,etc" then click on Create Profile.</p>
+<p>In the Connection change "Wep Deploy" to "File system" and choose your fav destination, in my case i choose "~/Desktop/Publish".</p>
+<p>In Settings do all the following:</p>
+* Keep release as is.
+* Target framework is the version of your net core "In my case it was 3 or 2.2".
+* Deployment Mode is Framework-Deployment.
+* Target Runtime is Linux-x64.
 
-Click "save" then publish, you will find the publish folder in the Desktop, keep it for now.
+<p>Click "save" then publish, you will find the publish folder in the Desktop, keep it for now.</p>
 
 ## .Net Configuration in Ubuntu machine
-We need to configure .Net core in the ubuntu server (Go root)
-
-In your Ubuntu machine
-Lets install .Net Core 2.2 (you can install any latest framework toy want)
+<p>We need to configure .Net core in the ubuntu server (Go root)</p>
+<p>In your Ubuntu machine</p>
+<p>Lets install .Net Core 2.2 (you can install any latest framework toy want)</p>
 <pre><code>
 $ wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
 $ sudo dpkg -i packages-microsoft-prod.deb
