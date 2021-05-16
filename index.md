@@ -1,8 +1,8 @@
 # In this project we will Create .NET Core Api Service and run it over Apache2 on Ubuntu 16/18/20
 ## Prerequisites
-An Ubuntu 16/18/2.0 /machine
-Sudo user (Root user)
-Putty to make the life easy
+* An Ubuntu 16/18/2.0 machine
+* Sudo user (Root user)
+* Putty to make the life easy
 
 ## Install Apache2 server
 In your Ubuntu Machine
